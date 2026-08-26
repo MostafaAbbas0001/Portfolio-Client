@@ -1,0 +1,23 @@
+name: portfolio-client
+
+services:
+  client:
+    build:
+      context: .
+      args:
+        VITE_API_BASE_URL: ${PUBLIC_API_BASE_URL:?Set PUBLIC_API_BASE_URL in client/.env}
+    image: portfolio-client:latest
+    container_name: portfolio-client
+    restart: unless-stopped
+    environment:
+      SERVER_API_BASE_URL: ${SERVER_API_BASE_URL:?Set SERVER_API_BASE_URL in client/.env}
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    ports:
+      - "127.0.0.1:${CLIENT_PORT:?Set CLIENT_PORT in client/.env}:3000"
+    networks:
+      - portfolio-mostafa
+
+networks:
+  portfolio-mostafa:
+    external: true

@@ -1,6 +1,5 @@
 import type { GlobalResponse, PageResponse, TechItem } from "@/types/siteData";
-
-const API_BASE_URL = import.meta.env["VITE_API_BASE_URL"];
+import { getApiBaseUrl, getPublicApiBaseUrl } from "./apiConfig";
 
 export interface UpdatePageDataRequest {
   content: unknown;
@@ -46,7 +45,7 @@ interface RawGlobalResponse {
 }
 
 async function apiGet<T>(path: string): Promise<T> {
-  const response = await fetch(`${API_BASE_URL}${path}`);
+  const response = await fetch(`${getApiBaseUrl()}${path}`);
 
   if (!response.ok) {
     throw new Error(`API request failed: ${response.status}`);
@@ -56,7 +55,7 @@ async function apiGet<T>(path: string): Promise<T> {
 }
 
 async function authenticatedRequest<T>(path: string, token: string, init: RequestInit) {
-  const response = await fetch(`${API_BASE_URL}${path}`, {
+  const response = await fetch(`${getApiBaseUrl()}${path}`, {
     ...init,
     headers: {
       Authorization: `Bearer ${token}`,
@@ -196,7 +195,7 @@ export function deleteImage(token: string, fileName: string) {
 }
 
 export function getApiAssetUrl(path: string) {
-  return `${API_BASE_URL}${path.startsWith("/") ? path : `/${path}`}`;
+  return `${getPublicApiBaseUrl()}${path.startsWith("/") ? path : `/${path}`}`;
 }
 
 export function resolveApiResourceUrl(path: string) {

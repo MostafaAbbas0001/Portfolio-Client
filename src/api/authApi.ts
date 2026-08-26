@@ -1,4 +1,4 @@
-const API_BASE_URL = import.meta.env["VITE_API_BASE_URL"];
+import { getApiBaseUrl } from "./apiConfig";
 
 export interface AuthUser {
   email: string;
@@ -11,7 +11,7 @@ export interface LoginResponse {
 }
 
 export async function login(email: string, password: string): Promise<LoginResponse> {
-  const response = await fetch(`${API_BASE_URL}/Auth/login`, {
+  const response = await fetch(`${getApiBaseUrl()}/Auth/login`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ email, password }),
@@ -25,7 +25,7 @@ export async function login(email: string, password: string): Promise<LoginRespo
 }
 
 export async function getCurrentUser(token: string): Promise<AuthUser> {
-  const response = await fetch(`${API_BASE_URL}/Auth/me`, {
+  const response = await fetch(`${getApiBaseUrl()}/Auth/me`, {
     headers: { Authorization: `Bearer ${token}` },
   });
 

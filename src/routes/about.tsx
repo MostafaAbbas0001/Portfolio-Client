@@ -32,6 +32,15 @@ function AboutPage() {
 
   if (!technologies) throw new Error("About page content is missing technologies.");
 
+  const technologyGroups = technologies.groups.map((group) => ({
+    ...group,
+    items: resolveTechnologyReferences(
+      technologyCatalog,
+      group.technologyKeys,
+      group.technologies ?? group.items,
+    ),
+  }));
+
   return (
     <section className="shell py-14 md:py-24">
       <SectionLabel>{about.label}</SectionLabel>
@@ -53,40 +62,48 @@ function AboutPage() {
         </div>
 
         <div className="lg:col-span-5">
-          <h2 className="label-mono">{technologies.label}</h2>
-          <dl className="mt-6 flex flex-col">
-            {technologies.groups.map((group) => (
-              <div key={group.label} className="border-t border-border py-5">
-                <dt className="text-sm">{group.label}</dt>
-                <dd className="mt-3">
-                  <ul className="grid grid-cols-2 gap-x-5 gap-y-3">
-                    {resolveTechnologyReferences(
-                      technologyCatalog,
-                      group.technologyKeys,
-                      group.technologies ?? group.items,
-                    ).map((technology) => (
+          <div className="border-y border-border py-6">
+            <h2 className="label-mono">{technologies.label}</h2>
+
+            <div className="mt-6 flex flex-col">
+              {technologyGroups.map((group) => (
+                <section
+                  key={group.label}
+                  className="grid min-w-0 gap-4 border-t border-border py-5 sm:grid-cols-[8rem_minmax(0,1fr)] sm:gap-6"
+                >
+                  <h3 className="text-sm font-medium">{group.label}</h3>
+
+                  <ul className="flex min-w-0 flex-wrap gap-x-7 gap-y-3">
+                    {group.items.map((technology) => (
                       <li
                         key={technology.id ?? technology.key ?? technology.name}
-                        className="mono-xs flex min-w-0 items-center gap-2.5 text-muted-foreground"
+                        className="flex min-w-0 items-center gap-2.5"
                       >
                         {technology.imageUrl ? (
                           <img
                             src={resolveApiResourceUrl(technology.imageUrl)}
-                            width={28}
-                            height={28}
+                            width={24}
+                            height={24}
                             alt={technology.alt ?? `${technology.name} logo`}
                             loading="lazy"
-                            className="size-6 shrink-0 object-contain"
+                            className="size-5 shrink-0 object-contain"
                           />
-                        ) : null}
-                        <span className="min-w-0">{technology.name}</span>
+                        ) : (
+                          <span
+                            aria-hidden="true"
+                            className="size-1.5 shrink-0 rounded-full bg-primary"
+                          />
+                        )}
+                        <span className="min-w-0 truncate text-sm text-muted-foreground">
+                          {technology.name}
+                        </span>
                       </li>
                     ))}
                   </ul>
-                </dd>
-              </div>
-            ))}
-          </dl>
+                </section>
+              ))}
+            </div>
+          </div>
         </div>
       </div>
     </section>

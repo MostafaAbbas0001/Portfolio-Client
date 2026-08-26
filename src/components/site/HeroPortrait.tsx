@@ -1,3 +1,4 @@
+import { useEffect, useRef, useState } from "react";
 import { resolveApiResourceUrl } from "@/api/siteDataApi";
 import { useLanguage } from "@/hooks/use-language";
 
@@ -13,6 +14,41 @@ interface HeroPortraitProps {
 export function HeroPortrait({ imageUrl, imageAlt, messages }: HeroPortraitProps) {
   const { direction } = useLanguage();
   const isRtl = direction === "rtl";
+  const imageRef = useRef<HTMLImageElement>(null);
+  const [isImageLoaded, setIsImageLoaded] = useState(false);
+  const [hasLoaderPlayed, setHasLoaderPlayed] = useState(false);
+  const [renderStage, setRenderStage] = useState(0);
+  const resolvedImageUrl = resolveApiResourceUrl(imageUrl);
+
+  useEffect(() => {
+    setIsImageLoaded(false);
+    if (imageRef.current?.complete) setIsImageLoaded(true);
+  }, [imageUrl]);
+
+  useEffect(() => {
+    setHasLoaderPlayed(false);
+    setRenderStage(0);
+
+    const stageTimers = [
+      window.setTimeout(() => setRenderStage(1), 1250),
+      window.setTimeout(() => setRenderStage(2), 2900),
+      window.setTimeout(() => setRenderStage(3), 4300),
+    ];
+    const completionTimer = window.setTimeout(() => setHasLoaderPlayed(true), 5000);
+
+    return () => {
+      stageTimers.forEach((timer) => window.clearTimeout(timer));
+      window.clearTimeout(completionTimer);
+    };
+  }, [imageUrl]);
+
+  const shouldShowLoader = !isImageLoaded || !hasLoaderPlayed;
+  const renderStages = [
+    "Encoding source",
+    "Resolving structure",
+    "Refining detail",
+    "Finalizing render",
+  ];
 
   return (
     <div className="relative isolate mx-auto aspect-[6/5] w-full max-w-[640px] bg-transparent">
@@ -57,6 +93,7 @@ export function HeroPortrait({ imageUrl, imageAlt, messages }: HeroPortraitProps
 
       <ul
         dir="ltr"
+        aria-hidden={shouldShowLoader}
         className={`absolute top-[40%] z-0 flex w-[47%] flex-col gap-1 ${
           isRtl ? "left-[1%]" : "right-[1%]"
         }`}
@@ -64,52 +101,92 @@ export function HeroPortrait({ imageUrl, imageAlt, messages }: HeroPortraitProps
         {messages.map((message, index) => (
           <li
             key={`${message}-${index}`}
-            className={`hero-circuit-message flex min-h-7 items-center gap-2 ${
-              isRtl ? "flex-row-reverse" : ""
+            className={`hero-circuit-message min-h-7 ${
+              shouldShowLoader ? "" : "hero-circuit-message--visible"
             }`}
             style={{
-              animationDelay: `-${index * 1.35}s`,
-              animationDuration: `${7.5 + (index % 3) * 1.4}s`,
+              animationDelay: `${index * 280}ms`,
             }}
           >
-            <svg
-              aria-hidden="true"
-              viewBox="0 0 100 32"
-              className={`h-auto shrink-0 overflow-visible text-primary opacity-55 ${
-                isRtl ? "-scale-x-100" : ""
+            <div
+              className={`hero-circuit-message__content flex items-center gap-2 ${
+                isRtl ? "flex-row-reverse" : ""
               }`}
-              style={{ width: `${52 - (index % 3) * 6}%` }}
+              style={{
+                animationDelay: `-${index * 1.7}s`,
+                animationDuration: `${8.5 + (index % 3) * 1.2}s`,
+              }}
             >
-              <path
-                d="M2 6 H45 L59 20 H87"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="1"
-                vectorEffect="non-scaling-stroke"
-              />
-              <circle cx="93" cy="20" r="2" fill="currentColor" />
-            </svg>
-            <span
-              dir={isRtl ? "rtl" : "ltr"}
-              className={`min-w-0 whitespace-nowrap font-mono text-[0.54rem] leading-snug tracking-[0.08em] uppercase text-muted-foreground sm:text-[0.6rem] ${
-                isRtl ? "text-right font-sans tracking-normal normal-case" : ""
-              }`}
-            >
-              {message}
-            </span>
+              <svg
+                aria-hidden="true"
+                viewBox="0 0 100 32"
+                className={`h-auto shrink-0 overflow-visible text-primary opacity-55 ${
+                  isRtl ? "-scale-x-100" : ""
+                }`}
+                style={{ width: `${52 - (index % 3) * 6}%` }}
+              >
+                <path
+                  d="M2 6 H45 L59 20 H87"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="1"
+                  vectorEffect="non-scaling-stroke"
+                />
+                <circle cx="93" cy="20" r="2" fill="currentColor" />
+              </svg>
+              <span
+                dir={isRtl ? "rtl" : "ltr"}
+                className={`min-w-0 whitespace-nowrap font-mono text-[0.54rem] leading-snug tracking-[0.08em] uppercase text-muted-foreground sm:text-[0.6rem] ${
+                  isRtl ? "text-right font-sans tracking-normal normal-case" : ""
+                }`}
+              >
+                {message}
+              </span>
+            </div>
           </li>
         ))}
       </ul>
 
+      <div
+        role="status"
+        aria-label={`${renderStages[renderStage]}, portrait loading`}
+        className={`hero-ai-loader absolute inset-x-0 bottom-[2%] z-10 h-[94%] overflow-hidden transition-opacity duration-500 ${
+          shouldShowLoader ? "opacity-100" : "pointer-events-none opacity-0"
+        }`}
+        style={{
+          maskImage: portraitFade,
+          WebkitMaskImage: portraitFade,
+        }}
+      >
+        <img aria-hidden="true" src={resolvedImageUrl} alt="" className="hero-ai-loader__preview" />
+        <img aria-hidden="true" src={resolvedImageUrl} alt="" className="hero-ai-loader__detail" />
+        <span aria-hidden="true" className="hero-ai-loader__sampling" />
+
+        <span className="hero-ai-loader__readout">
+          <span className="hero-ai-loader__meta">
+            <span>Portrait synthesis</span>
+            <span>0{renderStage + 1} / 04</span>
+          </span>
+          <span className="hero-ai-loader__track" aria-hidden="true">
+            <span />
+          </span>
+          <span className="hero-ai-loader__phase">{renderStages[renderStage]}</span>
+        </span>
+      </div>
+
       <img
-        src={resolveApiResourceUrl(imageUrl)}
+        ref={imageRef}
+        src={resolvedImageUrl}
         width={1450}
         height={1086}
         alt={imageAlt}
         fetchPriority="high"
         decoding="async"
+        onLoad={() => setIsImageLoaded(true)}
         sizes="(min-width: 1024px) 46vw, 92vw"
-        className="absolute inset-x-0 bottom-[2%] z-10 mx-auto block h-auto w-[94%] object-contain object-bottom"
+        className={`absolute inset-x-0 bottom-[2%] z-10 mx-auto block h-auto w-[94%] object-contain object-bottom transition-opacity duration-700 ${
+          shouldShowLoader ? "opacity-0" : "opacity-100"
+        }`}
         style={{
           maskImage: portraitFade,
           WebkitMaskImage: portraitFade,

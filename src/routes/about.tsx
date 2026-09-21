@@ -46,64 +46,60 @@ function AboutPage() {
       <SectionLabel>{about.label}</SectionLabel>
       <TrustedHtml as="h1" className="mt-6 display-lg" html={about.headline} />
 
-      <div className="mt-14 grid gap-12 lg:grid-cols-12 lg:gap-16">
-        <div className="lg:col-span-7">
-          <TrustedHtml as="p" className="lead" html={about.intro} />
-          <div className="mt-8 flex flex-col gap-5 body-copy text-muted-foreground">
-            {about.paragraphs.map((paragraph) => (
-              <TrustedHtml key={paragraph} as="p" html={paragraph} />
-            ))}
-          </div>
-          <p className="mt-9">
-            <Link to="/experience" className="label-mono arrow-move text-foreground link-underline">
-              {about.experienceLinkLabel} <span className="arrow">-&gt;</span>
-            </Link>
-          </p>
+      <div className="mt-14 max-w-4xl">
+        <TrustedHtml as="p" className="lead" html={about.intro} />
+        <div className="mt-8 flex flex-col gap-5 body-copy text-muted-foreground">
+          {about.paragraphs.map((paragraph) => (
+            <TrustedHtml key={paragraph} as="p" html={paragraph} />
+          ))}
         </div>
+        <p className="mt-9">
+          <Link to="/experience" className="label-mono arrow-move text-foreground link-underline">
+            {about.experienceLinkLabel} <span className="arrow">-&gt;</span>
+          </Link>
+        </p>
+      </div>
 
-        <div className="lg:col-span-5">
-          <div className="border-y border-border py-6">
-            <h2 className="label-mono">{technologies.label}</h2>
+      <div className="mt-16 border-b border-border py-6 md:mt-24">
+        <h2 className="label-mono">{technologies.label}</h2>
 
-            <div className="mt-6 flex flex-col">
-              {technologyGroups.map((group) => (
-                <section
-                  key={group.label}
-                  className="grid min-w-0 gap-4 border-t border-border py-5 sm:grid-cols-[8rem_minmax(0,1fr)] sm:gap-6"
-                >
-                  <h3 className="text-sm font-medium">{group.label}</h3>
+        <div className="mt-6 flex flex-col">
+          {technologyGroups.map((group) => (
+            <section
+              key={group.label}
+              className="grid min-w-0 gap-4 border-t border-border py-5 sm:grid-cols-[10rem_minmax(0,1fr)] sm:gap-8 lg:grid-cols-[14rem_minmax(0,1fr)]"
+            >
+              <h3 className="text-sm font-medium">{group.label}</h3>
 
-                  <ul className="flex min-w-0 flex-wrap gap-x-7 gap-y-3">
-                    {group.items.map((technology) => (
-                      <li
-                        key={technology.id ?? technology.key ?? technology.name}
-                        className="flex min-w-0 items-center gap-2.5"
-                      >
-                        {technology.imageUrl ? (
-                          <img
-                            src={resolveApiResourceUrl(technology.imageUrl)}
-                            width={24}
-                            height={24}
-                            alt={technology.alt ?? `${technology.name} logo`}
-                            loading="lazy"
-                            className="size-5 shrink-0 object-contain"
-                          />
-                        ) : (
-                          <span
-                            aria-hidden="true"
-                            className="size-1.5 shrink-0 rounded-full bg-primary"
-                          />
-                        )}
-                        <span className="min-w-0 truncate text-sm text-muted-foreground">
-                          {technology.name}
-                        </span>
-                      </li>
-                    ))}
-                  </ul>
-                </section>
-              ))}
-            </div>
-          </div>
+              <ul className="flex min-w-0 flex-wrap gap-x-8 gap-y-3">
+                {group.items.map((technology) => (
+                  <li
+                    key={technology.id ?? technology.key ?? technology.name}
+                    className="flex min-w-0 items-center gap-2.5"
+                  >
+                    {technology.imageUrl ? (
+                      <img
+                        src={resolveApiResourceUrl(technology.imageUrl)}
+                        width={24}
+                        height={24}
+                        alt={technology.alt ?? `${technology.name} logo`}
+                        loading="lazy"
+                        className="size-5 shrink-0 object-contain"
+                      />
+                    ) : (
+                      <span
+                        aria-hidden="true"
+                        className="size-1.5 shrink-0 rounded-full bg-primary"
+                      />
+                    )}
+                    <span className="min-w-0 truncate text-sm text-muted-foreground">
+                      {technology.name}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            </section>
+          ))}
         </div>
       </div>
     </section>

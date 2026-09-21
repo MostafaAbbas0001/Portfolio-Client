@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { resolveApiResourceUrl } from "@/api/siteDataApi";
 import { useLanguage } from "@/hooks/use-language";
+import type { ReactNode } from "react";
 
 const portraitFade =
   "linear-gradient(to bottom, black 0%, black 88%, rgba(0,0,0,0.9) 94%, transparent 100%)";
@@ -9,9 +10,10 @@ interface HeroPortraitProps {
   imageUrl: string;
   imageAlt: string;
   messages: string[];
+  overlay?: ReactNode;
 }
 
-export function HeroPortrait({ imageUrl, imageAlt, messages }: HeroPortraitProps) {
+export function HeroPortrait({ imageUrl, imageAlt, messages, overlay }: HeroPortraitProps) {
   const { direction } = useLanguage();
   const isRtl = direction === "rtl";
   const imageRef = useRef<HTMLImageElement>(null);
@@ -43,29 +45,28 @@ export function HeroPortrait({ imageUrl, imageAlt, messages }: HeroPortraitProps
   }, [imageUrl]);
 
   const shouldShowLoader = !isImageLoaded || !hasLoaderPlayed;
-  const renderStages = [
-    "Encoding source",
-    "Resolving structure",
-    "Refining detail",
-    "Finalizing render",
-  ];
+  const renderStages = isRtl
+    ? ["ترميز المصدر", "معالجة البنية", "تحسين التفاصيل", "تحميل سنوات الخبرة"]
+    : ["Encoding source", "Resolving structure", "Refining detail", "Loaded experience years"];
 
   return (
     <div className="relative isolate mx-auto aspect-[6/5] w-full max-w-[640px] bg-transparent">
+      {overlay && (
+        <div
+          className={`pointer-events-none absolute top-[2%] z-20 scale-[0.78] sm:scale-90 lg:scale-100 ${
+            isRtl ? "right-[2%] origin-top-right" : "left-[2%] origin-top-left"
+          }`}
+        >
+          <div key={resolvedImageUrl} className="hero-experience-render">
+            {overlay}
+          </div>
+        </div>
+      )}
+
       <div
         aria-hidden="true"
         className="absolute inset-[7%] -z-10 bg-[radial-gradient(ellipse_at_50%_42%,rgba(18,103,243,0.12)_0%,rgba(18,103,243,0.055)_34%,rgba(18,103,243,0.018)_54%,transparent_74%)]"
       />
-
-      <div
-        aria-hidden="true"
-        className={`absolute top-[12%] z-0 h-[9%] w-[10%] opacity-55 ${
-          isRtl ? "right-[5%]" : "left-[5%]"
-        }`}
-      >
-        <span className={`absolute top-0 h-px w-full bg-primary ${isRtl ? "right-0" : "left-0"}`} />
-        <span className={`absolute top-0 h-full w-px bg-primary ${isRtl ? "right-0" : "left-0"}`} />
-      </div>
 
       <div
         aria-hidden="true"

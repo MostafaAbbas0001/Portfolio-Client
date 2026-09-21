@@ -252,6 +252,11 @@
   isolation: isolate;
 }
 
+.hero-experience-render {
+  animation: hero-experience-resolve 5s cubic-bezier(0.22, 1, 0.36, 1) both;
+  will-change: opacity, filter, transform;
+}
+
 .hero-ai-loader__preview,
 .hero-ai-loader__detail,
 .hero-ai-loader__sampling,
@@ -382,6 +387,24 @@
     filter: blur(0) grayscale(0) contrast(1);
     opacity: 1;
     transform: scale(1);
+  }
+}
+
+@keyframes hero-experience-resolve {
+  0%,
+  52% {
+    opacity: 0;
+    filter: blur(12px);
+    transform: translateY(6px) scale(0.97);
+  }
+  72% {
+    opacity: 0.35;
+    filter: blur(6px);
+  }
+  100% {
+    opacity: 1;
+    filter: blur(0);
+    transform: translateY(0) scale(1);
   }
 }
 

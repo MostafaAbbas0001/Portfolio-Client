@@ -8,7 +8,7 @@ import {
   HeadContent,
   Scripts,
 } from "@tanstack/react-router";
-import { useEffect, type ReactNode } from "react";
+import { Suspense, useEffect, type ReactNode } from "react";
 
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
@@ -133,10 +133,20 @@ function RootComponent() {
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
         <LanguageProvider>
-          <RootLayout pathname={pathname} />
+          <Suspense fallback={<SiteLoadingScreen />}>
+            <RootLayout pathname={pathname} />
+          </Suspense>
         </LanguageProvider>
       </AuthProvider>
     </QueryClientProvider>
+  );
+}
+
+function SiteLoadingScreen() {
+  return (
+    <div className="min-h-screen bg-background" role="status" aria-label="Loading website">
+      <span className="sr-only">Loading website</span>
+    </div>
   );
 }
 
@@ -160,7 +170,7 @@ function PublicSiteLayout({ pathname }: { pathname: string }) {
         Skip to content
       </a>
       <SiteHeader globalData={globalData} />
-      <main id="main">
+      <main id="main" className="min-h-[calc(100svh-5rem)]">
         {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
         <div key={pathname} className="rise">
           <Outlet />

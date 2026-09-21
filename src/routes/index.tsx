@@ -6,6 +6,7 @@ import { pageMeta, personSchema, websiteSchema } from "@/lib/seo";
 import { TechStrip } from "@/components/site/TechStrip";
 import { ProjectCard } from "@/components/site/ProjectCard";
 import { HeroPortrait } from "@/components/site/HeroPortrait";
+import { ProfessionalExperienceStat } from "@/components/site/ProfessionalExperienceStat";
 import { SectionLabel } from "@/components/ui/SectionLabel";
 import { TrustedHtml } from "@/components/ui/TrustedHtml";
 import { useCurrentPageData } from "@/hooks/use-site-data";
@@ -82,7 +83,7 @@ function HomePage() {
   return (
     <>
       <section className="tech-grid" aria-labelledby="hero-heading">
-        <div className="shell grid items-start gap-12 pt-10 pb-16 md:pt-20 md:pb-24 lg:grid-cols-[minmax(0,1fr)_minmax(420px,0.92fr)] lg:gap-14 xl:gap-20">
+        <div className="shell grid items-start gap-12 pt-10 pb-10 md:pt-20 md:pb-14 lg:grid-cols-[minmax(0,1fr)_minmax(420px,0.92fr)] lg:items-center lg:gap-14 xl:gap-20">
           <div className="rise min-w-0 lg:max-w-[720px]">
             <div>
               <SectionLabel>{home.label}</SectionLabel>
@@ -97,6 +98,7 @@ function HomePage() {
                   imageUrl={home.heroImageUrl}
                   imageAlt={home.heroImageAlt}
                   messages={heroCircuitMessages}
+                  overlay={<ProfessionalExperienceStat />}
                 />
               </div>
             </div>
@@ -122,6 +124,7 @@ function HomePage() {
               imageUrl={home.heroImageUrl}
               imageAlt={home.heroImageAlt}
               messages={heroCircuitMessages}
+              overlay={<ProfessionalExperienceStat />}
             />
           </div>
         </div>

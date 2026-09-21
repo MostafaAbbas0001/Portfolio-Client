@@ -16,6 +16,10 @@ export interface MediaUploadResponse {
   size: number;
 }
 
+export interface ProfessionalExperienceResponse {
+  startDate: string;
+}
+
 interface RawSectionContent {
   id: number;
   pageId: number;
@@ -117,6 +121,10 @@ export async function getGlobalData(language: string): Promise<GlobalResponse> {
 
 export function getTechnologies(): Promise<TechItem[]> {
   return apiGet<TechItem[]>("/Site/technologies");
+}
+
+export function getProfessionalExperience(): Promise<ProfessionalExperienceResponse> {
+  return apiGet<ProfessionalExperienceResponse>("/api/professional-experience");
 }
 
 export interface TechnologyInput {

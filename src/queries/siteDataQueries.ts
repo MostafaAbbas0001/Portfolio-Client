@@ -1,11 +1,17 @@
 import { queryOptions } from "@tanstack/react-query";
-import { getPageData, getGlobalData, getTechnologies } from "@/api/siteDataApi";
+import {
+  getPageData,
+  getGlobalData,
+  getProfessionalExperience,
+  getTechnologies,
+} from "@/api/siteDataApi";
 import type { PageResponse } from "@/types/siteData";
 
 const siteDataKeys = {
   page: (language: string, pageKey: string) => ["page-data", language, pageKey] as const,
   global: (language: string) => ["global-data", language] as const,
   technologies: ["technologies"] as const,
+  professionalExperience: ["professional-experience"] as const,
 };
 
 export function pageDataQuery<TContent = unknown>(language: string, pageKey: string) {
@@ -29,5 +35,14 @@ export function technologiesQuery() {
     queryKey: siteDataKeys.technologies,
     queryFn: getTechnologies,
     staleTime: 1000 * 60 * 30,
+  });
+}
+
+export function professionalExperienceQuery() {
+  return queryOptions({
+    queryKey: siteDataKeys.professionalExperience,
+    queryFn: getProfessionalExperience,
+    staleTime: 1000 * 60 * 60,
+    retry: 1,
   });
 }

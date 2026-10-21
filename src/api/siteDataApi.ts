@@ -1,0 +1,256 @@
+import type { GlobalResponse, PageResponse, TechItem } from "@/types/siteData";
+import { getApiBaseUrl, getPublicApiBaseUrl } from "./apiConfig";
+
+export interface UpdatePageDataRequest {
+  content: unknown;
+  seoData?: unknown;
+  sections: Array<{ id: number; content: unknown }>;
+}
+
+export interface MediaUploadResponse {
+  fileName: string;
+  originalFileName: string;
+  folder: "images" | "resume";
+  url: string;
+  contentType: string;
+  size: number;
+}
+
+export interface ProfessionalExperienceResponse {
+  startDate: string;
+}
+
+interface RawSectionContent {
+  id: number;
+  pageId: number;
+  key: string;
+  content?: string | null;
+}
+
+interface RawPageResponse {
+  language: PageResponse["language"];
+  data: {
+    id: number;
+    key: string;
+    slug: string;
+    content?: string | null;
+    seoData?: string | null;
+    sections: RawSectionContent[];
+  };
+}
+
+interface RawGlobalResponse {
+  language: GlobalResponse["language"];
+  data: Array<{
+    id: number;
+    key: string;
+    content?: string | null;
+  }>;
+}
+
+async function apiGet<T>(path: string): Promise<T> {
+  const response = await fetch(`${getApiBaseUrl()}${path}`);
+
+  if (!response.ok) {
+    throw new Error(`API request failed: ${response.status}`);
+  }
+
+  return response.json();
+}
+
+async function authenticatedRequest<T>(path: string, token: string, init: RequestInit) {
+  const response = await fetch(`${getApiBaseUrl()}${path}`, {
+    ...init,
+    headers: {
+      Authorization: `Bearer ${token}`,
+      ...init.headers,
+    },
+  });
+
+  if (!response.ok) {
+    const message = await response.text();
+    throw new Error(message || `API request failed: ${response.status}`);
+  }
+
+  const contentType = response.headers.get("content-type");
+  return contentType?.includes("application/json")
+    ? (response.json() as Promise<T>)
+    : (undefined as T);
+}
+
+function parseJson<T = unknown>(value: string | null | undefined): T {
+  if (!value) return {} as T;
+  return JSON.parse(value) as T;
+}
+
+export async function getPageData<TContent = unknown>(
+  language: string,
+  pageKey: string,
+): Promise<PageResponse<TContent>> {
+  const response = await apiGet<RawPageResponse>(
+    `/Site/page-data?language=${encodeURIComponent(language)}&pagekey=${encodeURIComponent(pageKey)}`,
+  );
+
+  return {
+    language: response.language,
+    data: {
+      ...response.data,
+      content: parseJson<TContent>(response.data.content),
+      seoData: response.data.seoData ? parseJson(response.data.seoData) : undefined,
+      sections: response.data.sections.map((section) => ({
+        ...section,
+        content: parseJson(section.content),
+      })),
+    },
+  };
+}
+
+export async function getGlobalData(language: string): Promise<GlobalResponse> {
+  const response = await apiGet<RawGlobalResponse>(
+    `/Site/global-data?language=${encodeURIComponent(language)}`,
+  );
+
+  return {
+    language: response.language,
+    data: response.data.map((item) => ({
+      ...item,
+      content: parseJson(item.content),
+    })),
+  };
+}
+
+export function getTechnologies(): Promise<TechItem[]> {
+  return apiGet<TechItem[]>("/Site/technologies");
+}
+
+export function getProfessionalExperience(): Promise<ProfessionalExperienceResponse> {
+  return apiGet<ProfessionalExperienceResponse>("/api/professional-experience");
+}
+
+export interface TechnologyInput {
+  key: string;
+  name: string;
+  imageUrl: string | null;
+}
+
+export function updateProfessionalExperience(token: string, startDate: string) {
+  return authenticatedRequest<ProfessionalExperienceResponse>(
+    "/api/professional-experience",
+    token,
+    {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ startDate }),
+    },
+  );
+}
+
+export function createTechnology(token: string, input: TechnologyInput) {
+  return authenticatedRequest<TechItem>("/Site/technologies", token, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(input),
+  });
+}
+
+export function updateTechnology(token: string, id: number, input: TechnologyInput) {
+  return authenticatedRequest<TechItem>(`/Site/technologies/${id}`, token, {
+    method: "PATCH",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(input),
+  });
+}
+
+export function deleteTechnology(token: string, id: number) {
+  return authenticatedRequest<void>(`/Site/technologies/${id}`, token, { method: "DELETE" });
+}
+
+export function updatePageData(
+  token: string,
+  language: string,
+  pageId: number,
+  request: UpdatePageDataRequest,
+) {
+  return authenticatedRequest<void>(
+    `/Site/page-data?language=${encodeURIComponent(language)}&pageId=${pageId}`,
+    token,
+    {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(request),
+    },
+  );
+}
+
+export function updateGlobalData(token: string, language: string, key: string, content: unknown) {
+  return authenticatedRequest<void>(
+    `/Site/global-data?language=${encodeURIComponent(language)}&key=${encodeURIComponent(key)}`,
+    token,
+    {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ content }),
+    },
+  );
+}
+
+export function uploadMedia(token: string, file: File) {
+  const formData = new FormData();
+  formData.append("file", file);
+
+  return authenticatedRequest<MediaUploadResponse>("/Site/upload-media", token, {
+    method: "POST",
+    body: formData,
+  });
+}
+
+export async function getImageFiles(): Promise<string[]> {
+  return apiGet<string[]>("/Site/media/images");
+}
+
+export function deleteImage(token: string, fileName: string) {
+  return authenticatedRequest<void>(`/Site/media/images/${encodeURIComponent(fileName)}`, token, {
+    method: "DELETE",
+  });
+}
+
+export function getApiAssetUrl(path: string) {
+  return `${getPublicApiBaseUrl()}${path.startsWith("/") ? path : `/${path}`}`;
+}
+
+export function resolveApiResourceUrl(path: string) {
+  if (path === "/resume.pdf") return getApiAssetUrl("/Site/media/resume");
+  if (path.startsWith("/Uploads/") || path.startsWith("/Site/media/")) {
+    return getApiAssetUrl(path);
+  }
+  return path;
+}
+
+/** Widths the API's /Site/image endpoint will generate. */
+export const IMAGE_WIDTHS = [64, 128, 256, 384, 480, 640, 768, 960, 1280, 1600] as const;
+export type ImageWidth = (typeof IMAGE_WIDTHS)[number];
+
+const RESIZABLE_UPLOAD = /^\/Uploads\/images\/[^/]+\.(png|jpe?g|webp|gif|bmp|tiff?)$/i;
+
+export function isResizableUpload(path: string | undefined | null): path is string {
+  return Boolean(path && RESIZABLE_UPLOAD.test(path));
+}
+
+/** A resized WebP copy of an uploaded image; other URLs are returned unchanged. */
+export function imageUrl(path: string, width: ImageWidth) {
+  if (!isResizableUpload(path)) return resolveApiResourceUrl(path);
+  return getApiAssetUrl(`/Site/image?src=${encodeURIComponent(path)}&w=${width}`);
+}
+
+export function imageSrcSet(path: string, widths: readonly ImageWidth[]) {
+  if (!isResizableUpload(path)) return undefined;
+  return widths.map((width) => `${imageUrl(path, width)} ${width}w`).join(", ");
+}
+
+export function getPublicApiOrigin() {
+  try {
+    return new URL(getPublicApiBaseUrl()).origin;
+  } catch {
+    return undefined;
+  }
+}

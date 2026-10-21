@@ -1,0 +1,1173 @@
+@import "tailwindcss" source(none);
+@import "@fontsource-variable/funnel-display";
+@import "@fontsource-variable/readex-pro";
+@import "lenis/dist/lenis.css";
+@source "../src";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 20px;
+  --color-background: var(--ground);
+  --color-foreground: var(--ink);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-card: var(--surface);
+  --color-card-foreground: var(--ink);
+  --color-popover: var(--surface);
+  --color-popover-foreground: var(--ink);
+  --color-primary: var(--brand-text);
+  --color-primary-foreground: var(--brand-ink);
+  --color-secondary: var(--surface-2);
+  --color-secondary-foreground: var(--ink);
+  --color-muted: var(--surface-2);
+  --color-muted-foreground: var(--ink-muted);
+  --color-muted-light: var(--ink-faint);
+  --color-faint: var(--ink-faint);
+  --color-accent: var(--brand-soft);
+  --color-accent-foreground: var(--brand-text);
+  --color-destructive: var(--danger);
+  --color-destructive-foreground: #ffffff;
+  --color-border: var(--line);
+  --color-line-strong: var(--line-strong);
+  --color-input: var(--line-strong);
+  --color-ring: var(--brand-text);
+  --color-live: var(--live);
+  --color-warn: var(--warn);
+  --color-brand: var(--brand);
+
+  --font-sans: var(--font-sans);
+  --font-display: var(--font-display);
+  --font-mono: var(--font-mono);
+}
+
+/* Two colours from the logo carry the whole system: its electric blue
+   (#0d61fd) is the main colour, and the navy of its letters (#131821) is the
+   dark-mode ground and the light-mode text. Solid colour only: no gradients,
+   no coloured glow. Dark is the default; the boot script in <head> sets
+   data-theme from the visitor's choice or their system setting. */
+:root {
+  color-scheme: dark;
+  --font-display:
+    "Funnel Display Variable", "Readex Pro Variable", "Segoe UI", system-ui, sans-serif;
+  --font-sans:
+    "Readex Pro Variable", "Segoe UI", system-ui, -apple-system, "Noto Sans Arabic", Tahoma,
+    sans-serif;
+  --font-mono: ui-monospace, "SFMono-Regular", "Cascadia Mono", Menlo, Consolas, monospace;
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+
+  --ground: #0d1118;
+  --surface: #131821;
+  --surface-2: #1a2130;
+  --ink: #eef2f8;
+  --ink-muted: #a2adbf;
+  --ink-faint: #7f8ba0;
+  --line: #212938;
+  --line-strong: #323c50;
+
+  /* Fills (buttons, timeline, selection) use the exact logo blue; blue text
+     on the dark ground is lifted to keep 4.5:1 contrast. */
+  --brand: #0d61fd;
+  --brand-hover: #2a74ff;
+  --brand-text: #4d8bff;
+  --brand-ink: #ffffff;
+  --brand-soft: rgba(13, 97, 253, 0.16);
+  --brand-line: rgba(77, 139, 255, 0.075);
+  --brand-mark: rgba(77, 139, 255, 0.4);
+  --orbit-line: rgba(77, 139, 255, 0.22);
+
+  --live: #3ddc97;
+  --warn: #f5b841;
+  --danger: #ff6b6b;
+
+  --header-bg: rgba(13, 17, 24, 0.55);
+  --header-bg-solid: rgba(19, 24, 33, 0.9);
+  --overlay: rgba(13, 17, 24, 0.98);
+  --hover-fill: rgba(255, 255, 255, 0.05);
+  --float-shadow: 0 20px 60px -30px rgba(0, 0, 0, 0.9);
+  --stage: rgba(255, 255, 255, 0.055);
+  --spot-fill: rgba(255, 255, 255, 0.03);
+  --grain: 0.035;
+
+  /* The CMS logo has navy letters; on dark they are recoloured to the ink
+     colour by the #logo-on-dark filter rendered in the page shell. */
+  --logo-filter: url(#logo-on-dark);
+  /* Black brand marks (Next.js, MySQL…) are inverted so they stay visible. */
+  --dark-mark-filter: invert(1) hue-rotate(180deg);
+  --only-dark: block;
+  --only-light: none;
+}
+
+/* Light theme. The admin screens always use it. */
+:root[data-theme="light"],
+:root[data-admin] {
+  color-scheme: light;
+  --ground: #f6f8fb;
+  --surface: #ffffff;
+  --surface-2: #eef1f6;
+  --ink: #131821;
+  --ink-muted: #4b5568;
+  --ink-faint: #667085;
+  --line: #e1e6ee;
+  --line-strong: #c9d1de;
+
+  --brand: #0d61fd;
+  --brand-hover: #0a56e6;
+  --brand-text: #0d61fd;
+  --brand-soft: rgba(13, 97, 253, 0.08);
+  --brand-line: rgba(13, 97, 253, 0.07);
+  --brand-mark: rgba(13, 97, 253, 0.32);
+  --orbit-line: rgba(13, 97, 253, 0.2);
+
+  --live: #0b7a52;
+  --warn: #9a5b00;
+  --danger: #c0262d;
+
+  --header-bg: rgba(246, 248, 251, 0.6);
+  --header-bg-solid: rgba(255, 255, 255, 0.9);
+  --overlay: rgba(246, 248, 251, 0.98);
+  --hover-fill: rgba(19, 24, 33, 0.045);
+  --float-shadow: 0 16px 40px -28px rgba(19, 24, 33, 0.35);
+  --stage: transparent;
+  --spot-fill: rgba(19, 24, 33, 0.02);
+  --grain: 0;
+
+  --logo-filter: none;
+  --dark-mark-filter: none;
+  --only-dark: none;
+  --only-light: block;
+}
+
+@layer base {
+  * {
+    border-color: var(--color-border);
+  }
+
+  html {
+    -webkit-text-size-adjust: 100%;
+    scroll-behavior: smooth;
+    scroll-padding-top: 6rem;
+    background-color: var(--color-background);
+  }
+
+  body {
+    background-color: var(--color-background);
+    color: var(--color-foreground);
+    font-family: var(--font-sans);
+    font-size: 1.0625rem;
+    font-weight: 350;
+    line-height: 1.65;
+    font-synthesis-weight: none;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+  }
+
+  /* Dark text on light needs a touch more weight than light text on dark. */
+  :root[data-theme="light"] body,
+  :root[data-admin] body {
+    font-weight: 400;
+  }
+
+  html[dir="rtl"] body {
+    line-height: 1.85;
+  }
+
+  h1,
+  h2,
+  h3 {
+    text-wrap: balance;
+  }
+
+  p,
+  li {
+    text-wrap: pretty;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-ring);
+    outline-offset: 3px;
+    border-radius: 6px;
+  }
+
+  ::selection {
+    background: var(--brand);
+    color: #ffffff;
+  }
+
+  ::-webkit-scrollbar {
+    width: 10px;
+  }
+  ::-webkit-scrollbar-track {
+    background: var(--ground);
+  }
+  ::-webkit-scrollbar-thumb {
+    background: var(--line-strong);
+    border-radius: 999px;
+    border: 2px solid var(--ground);
+  }
+}
+
+/* Film grain, so large dark areas never look flat. Off in light mode. */
+.grain {
+  pointer-events: none;
+  position: fixed;
+  inset: 0;
+  z-index: 70;
+  opacity: var(--grain);
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+}
+
+/* ---------- Type ---------- */
+
+@utility shell {
+  width: 100%;
+  margin-inline: auto;
+  max-width: 1320px;
+  padding-inline: 20px;
+  @media (min-width: 768px) {
+    padding-inline: 36px;
+  }
+  @media (min-width: 1280px) {
+    padding-inline: 56px;
+  }
+}
+
+@utility display {
+  font-family: var(--font-display);
+  font-size: clamp(3rem, 1.2rem + 5.8vw, 6.4rem);
+  line-height: 0.95;
+  letter-spacing: -0.042em;
+  font-weight: 600;
+  :where([dir="rtl"]) & {
+    letter-spacing: 0;
+    line-height: 1.25;
+    font-size: clamp(2.6rem, 1.2rem + 5vw, 5.75rem);
+  }
+}
+
+@utility title-1 {
+  font-family: var(--font-display);
+  font-size: clamp(2.6rem, 1.4rem + 4.2vw, 5.25rem);
+  line-height: 0.98;
+  letter-spacing: -0.038em;
+  font-weight: 600;
+  :where([dir="rtl"]) & {
+    letter-spacing: 0;
+    line-height: 1.3;
+  }
+}
+
+@utility title-2 {
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 1.25rem + 2.8vw, 3.6rem);
+  line-height: 1.02;
+  letter-spacing: -0.034em;
+  font-weight: 600;
+  :where([dir="rtl"]) & {
+    letter-spacing: 0;
+    line-height: 1.35;
+  }
+}
+
+/* Title of a row in an index, e.g. a project. */
+@utility title-row {
+  font-family: var(--font-display);
+  font-size: clamp(1.6rem, 1.15rem + 1.5vw, 2.5rem);
+  line-height: 1.06;
+  letter-spacing: -0.03em;
+  font-weight: 600;
+  :where([dir="rtl"]) & {
+    letter-spacing: 0;
+    line-height: 1.4;
+  }
+}
+
+@utility title-3 {
+  font-family: var(--font-display);
+  font-size: clamp(1.35rem, 1.15rem + 0.7vw, 1.75rem);
+  line-height: 1.12;
+  letter-spacing: -0.022em;
+  font-weight: 600;
+  :where([dir="rtl"]) & {
+    letter-spacing: 0;
+    line-height: 1.45;
+  }
+}
+
+@utility lead {
+  font-size: clamp(1.125rem, 1rem + 0.45vw, 1.3125rem);
+  line-height: 1.6;
+  color: var(--color-muted-foreground);
+  max-width: 58ch;
+  :where([dir="rtl"]) & {
+    line-height: 1.9;
+  }
+}
+
+@utility body-copy {
+  font-size: 1.0625rem;
+  line-height: 1.75;
+  max-width: 68ch;
+  :where([dir="rtl"]) & {
+    line-height: 1.95;
+  }
+}
+
+@utility meta {
+  font-size: 0.875rem;
+  line-height: 1.5;
+  color: var(--color-muted-foreground);
+}
+
+/* Short context line above a title, set in the brand colour. */
+@utility kicker {
+  font-size: 0.9375rem;
+  line-height: 1.4;
+  font-weight: 500;
+  color: var(--color-primary);
+}
+
+@utility label-mono {
+  font-size: 0.8125rem;
+  line-height: 1.4;
+  font-weight: 500;
+  color: var(--color-muted-foreground);
+}
+
+@utility mono-xs {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+}
+
+@utility data {
+  font-family: var(--font-mono);
+  font-size: 0.8125rem;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.01em;
+  :where([dir="rtl"]) & {
+    font-family: var(--font-sans);
+    font-size: 0.875rem;
+    letter-spacing: 0;
+  }
+}
+
+@utility link {
+  text-decoration-line: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.25em;
+  text-decoration-color: var(--color-line-strong);
+  transition:
+    color 200ms ease,
+    text-decoration-color 200ms ease;
+  &:hover {
+    color: var(--color-primary);
+    text-decoration-color: currentColor;
+  }
+}
+
+@utility link-underline {
+  text-decoration-line: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.25em;
+  text-decoration-color: var(--color-line-strong);
+  &:hover {
+    color: var(--color-primary);
+    text-decoration-color: currentColor;
+  }
+}
+
+/* CMS headlines mark one phrase with <span class="text-primary">: the
+   sentence is set in ink and the marked phrase in the brand blue. */
+@utility cms-heading {
+  color: var(--color-foreground);
+  & .text-primary {
+    color: var(--color-primary);
+  }
+}
+
+/* ---------- Surfaces ---------- */
+
+.glass-blur {
+  backdrop-filter: blur(16px) saturate(130%);
+  -webkit-backdrop-filter: blur(16px) saturate(130%);
+}
+
+/* Content sits on the page, divided by hairlines; frames are kept for real
+   objects only (portrait, screenshots). Hairlines draw themselves in from the
+   start side as they scroll into view. */
+.hairline,
+.ruled {
+  position: relative;
+}
+
+.hairline::before,
+.ruled::before {
+  content: "";
+  position: absolute;
+  inset-inline: 0;
+  top: 0;
+  height: 1px;
+  background: var(--line);
+  transform-origin: left;
+  transition: transform 1400ms var(--ease-out) 120ms;
+}
+
+[dir="rtl"] :is(.hairline, .ruled)::before {
+  transform-origin: right;
+}
+
+html.js [data-reveal]:not([data-inview]) :is(.hairline, .ruled)::before,
+html.js :is(.hairline, .ruled)[data-reveal]:not([data-inview])::before {
+  transform: scaleX(0);
+}
+
+/* A project's logo as a physical badge: it turns to face the cursor anywhere
+   over its row (angles from the motion script) and a soft highlight slides
+   across its face, like light on enamel. */
+.project-mark {
+  position: relative;
+  display: inline-grid;
+  place-items: center;
+  flex-shrink: 0;
+  border-radius: 50%;
+  transform: perspective(640px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg))
+    scale(var(--lift, 1));
+  transition: transform 650ms var(--ease-out);
+}
+
+.project-mark::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  pointer-events: none;
+  background: radial-gradient(
+    circle at var(--sx, 50%) var(--sy, 35%),
+    rgba(255, 255, 255, 0.7),
+    transparent 58%
+  );
+  mix-blend-mode: soft-light;
+  opacity: 0;
+  transition: opacity 500ms ease;
+}
+
+.group:hover .project-mark,
+.group:focus-within .project-mark {
+  --lift: 1.05;
+}
+
+.group:hover .project-mark::after {
+  opacity: 1;
+}
+
+/* Round arrow at the end of a ruled row; fills with the brand colour. */
+.arrow-disc {
+  display: inline-grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 3rem;
+  height: 3rem;
+  border-radius: 999px;
+  border: 1px solid var(--line-strong);
+  color: var(--ink);
+  transition:
+    background-color 300ms ease,
+    border-color 300ms ease,
+    color 300ms ease;
+}
+
+.arrow-disc svg {
+  transition: translate 450ms var(--ease-out);
+}
+
+.group:hover .arrow-disc,
+.group:focus-within .arrow-disc {
+  color: #ffffff;
+  background: var(--brand);
+  border-color: var(--brand);
+}
+
+.group:hover .arrow-disc svg {
+  translate: 3px 0;
+}
+
+[dir="rtl"] .group:hover .arrow-disc svg {
+  translate: -3px 0;
+}
+
+/* Technology logos keep their brand colours. Marks drawn in black are
+   flagged with data-mark="dark" and inverted on the dark theme. */
+.tech-logo[data-mark="dark"] {
+  filter: var(--dark-mark-filter);
+}
+
+/* ---------- Header and logo ---------- */
+
+.nav-bar {
+  background: var(--header-bg);
+  border-color: transparent;
+}
+
+.nav-bar[data-solid] {
+  background: var(--header-bg-solid);
+  border-color: var(--line);
+  box-shadow: var(--float-shadow);
+}
+
+.nav-overlay {
+  background: var(--overlay);
+}
+
+/* The square CMS logo image has empty space above and below the mark; the
+   box crops it to the mark. */
+.site-logo {
+  position: relative;
+  display: block;
+  width: 6.25rem;
+  height: 2.25rem;
+  overflow: hidden;
+}
+
+.site-logo img {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 6.25rem;
+  max-width: none;
+  height: auto;
+  transform: translate(-50%, -50%);
+}
+
+.site-logo img[data-recolor] {
+  filter: var(--logo-filter);
+}
+
+.site-logo img[data-variant="dark"] {
+  display: var(--only-dark);
+}
+
+.site-logo img[data-variant="light"] {
+  display: var(--only-light);
+}
+
+/* The header theme button shows the icon of the saved choice, before React loads. */
+[data-pref-icon] {
+  display: none;
+}
+
+:root[data-theme-pref="light"] [data-pref-icon="light"],
+:root[data-theme-pref="dark"] [data-pref-icon="dark"],
+:root:not([data-theme-pref="light"], [data-theme-pref="dark"]) [data-pref-icon="system"] {
+  display: block;
+}
+
+/* ---------- Controls ---------- */
+
+.btn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  min-height: 3rem;
+  padding-inline: 1.35rem;
+  border-radius: 999px;
+  border: 1px solid transparent;
+  font-size: 0.9375rem;
+  font-weight: 500;
+  line-height: 1.2;
+  transition:
+    transform 350ms var(--ease-out),
+    border-color 250ms ease,
+    background-color 250ms ease,
+    color 250ms ease;
+  transform: translate(var(--tx, 0), var(--ty, 0));
+}
+
+.btn svg {
+  transition: transform 350ms var(--ease-out);
+}
+
+.btn:hover svg:last-child {
+  transform: translateX(3px);
+}
+
+[dir="rtl"] .btn:hover svg:last-child {
+  transform: translateX(-3px);
+}
+
+.btn-primary {
+  color: var(--brand-ink);
+  background: var(--brand);
+}
+
+.btn-primary:hover {
+  background: var(--brand-hover);
+}
+
+.btn-quiet {
+  color: var(--color-foreground);
+  background: transparent;
+  border-color: var(--line-strong);
+}
+
+.btn-quiet:hover {
+  border-color: var(--ink-faint);
+  background: var(--hover-fill);
+}
+
+.icon-btn {
+  display: inline-grid;
+  place-items: center;
+  width: 2.75rem;
+  height: 2.75rem;
+  border-radius: 999px;
+  color: var(--ink-muted);
+  transition:
+    color 200ms ease,
+    background-color 200ms ease;
+}
+
+.icon-btn:hover,
+.icon-btn[aria-expanded="true"] {
+  color: var(--ink);
+  background: var(--hover-fill);
+}
+
+/* Small dropdown, e.g. the theme menu. */
+.menu {
+  min-width: 11rem;
+  padding: 0.375rem;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: var(--surface);
+  box-shadow: var(--float-shadow);
+}
+
+.menu-item {
+  display: flex;
+  width: 100%;
+  min-height: 2.5rem;
+  align-items: center;
+  gap: 0.75rem;
+  padding-inline: 0.75rem;
+  border-radius: 10px;
+  font-size: 0.9375rem;
+  color: var(--ink-muted);
+  text-align: start;
+}
+
+.menu-item:hover,
+.menu-item:focus-visible {
+  color: var(--ink);
+  background: var(--hover-fill);
+}
+
+.menu-item[aria-checked="true"] {
+  color: var(--ink);
+}
+
+/* Segmented control, e.g. light / dark / system. */
+.segmented {
+  display: inline-flex;
+  gap: 2px;
+  padding: 3px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: var(--surface);
+}
+
+.segmented button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  min-width: 2.5rem;
+  min-height: 2.5rem;
+  padding-inline: 0.75rem;
+  border-radius: 999px;
+  font-size: 0.875rem;
+  color: var(--ink-muted);
+  transition:
+    color 200ms ease,
+    background-color 200ms ease;
+}
+
+.segmented button:hover {
+  color: var(--ink);
+}
+
+.segmented button[aria-checked="true"] {
+  color: var(--ink);
+  background: var(--surface-2);
+  box-shadow: inset 0 0 0 1px var(--line-strong);
+}
+
+/* ---------- Motion primitives ---------- */
+
+/* Scroll reveal. Only hidden once the boot script has marked the page as
+   scripted, so content is always visible without JavaScript. */
+html.js [data-reveal]:not([data-inview]) {
+  opacity: 0;
+  transform: translate3d(0, 32px, 0);
+}
+
+[data-reveal] {
+  transition:
+    opacity 1000ms var(--ease-out),
+    transform 1200ms var(--ease-out);
+  transition-delay: calc(var(--d, 0) * 90ms);
+}
+
+/* Groups that stay put while their [data-stagger] children arrive one after
+   another (ordered by --s), and headlines whose words do the moving. */
+html.js [data-reveal][data-reveal="stagger"]:not([data-inview]),
+html.js .words-view[data-reveal]:not([data-inview]) {
+  opacity: 1;
+  transform: none;
+}
+
+html.js [data-reveal]:not([data-inview]) [data-stagger] {
+  opacity: 0;
+  transform: translate3d(0, 24px, 0);
+}
+
+html.js [data-reveal]:not([data-inview]) [data-stagger="mark"] {
+  transform: scale(0.8);
+}
+
+[data-stagger] {
+  transition:
+    opacity 1000ms var(--ease-out),
+    transform 1300ms var(--ease-out);
+  transition-delay: calc(var(--s, 0) * 110ms + 120ms);
+}
+
+/* Headlines below the fold hold their words until scrolled into view. */
+html.js .words-view:not([data-inview]) .w > span {
+  animation-play-state: paused;
+}
+
+/* Headline words rise out of their own line box. */
+.words .w {
+  display: inline-block;
+  overflow: hidden;
+  vertical-align: bottom;
+  padding-bottom: 0.12em;
+  margin-bottom: -0.12em;
+  padding-inline-end: 0.02em;
+}
+
+.words .w > span {
+  display: inline-block;
+  transform: translate3d(0, 108%, 0);
+  animation: word-up 1000ms var(--ease-out) forwards;
+  animation-delay: calc(var(--i, 0) * 60ms + 100ms);
+}
+
+/* Starts at 1% opacity, not 0, so the browser counts the text as painted from
+   the first frame (Largest Contentful Paint ignores fully transparent text). */
+.fade-up {
+  opacity: 0.01;
+  animation: fade-up 1000ms var(--ease-out) forwards;
+  animation-delay: calc(var(--d, 0) * 90ms + 250ms);
+}
+
+/* Count-up numbers rendered by CSS so the real value is always in the HTML. */
+@property --num {
+  syntax: "<integer>";
+  initial-value: 0;
+  inherits: false;
+}
+
+.count {
+  --num: var(--to, 0);
+  counter-reset: num var(--num);
+  font-variant-numeric: tabular-nums;
+}
+
+.count::after {
+  content: counter(num);
+}
+
+html.js .count {
+  animation: count-up 2000ms var(--ease-out) forwards;
+  animation-delay: 500ms;
+}
+
+/* Infinite technology band */
+.marquee {
+  direction: ltr;
+  overflow: hidden;
+  mask-image: linear-gradient(90deg, transparent, #000 10%, #000 90%, transparent);
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 10%, #000 90%, transparent);
+}
+
+.marquee-track {
+  display: flex;
+  width: max-content;
+  gap: 0.75rem;
+  animation: marquee var(--marquee-duration, 48s) linear infinite;
+}
+
+.marquee-track[data-reverse] {
+  animation-direction: reverse;
+}
+
+.marquee:hover .marquee-track {
+  animation-play-state: paused;
+}
+
+/* Neutral light from above, like a lit stage (dark theme only). */
+.stage-light {
+  pointer-events: none;
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: radial-gradient(70% 55% at 50% -10%, var(--stage), transparent 70%);
+}
+
+.cursor-glow {
+  pointer-events: none;
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: radial-gradient(
+    520px circle at var(--gx, 70%) var(--gy, 30%),
+    var(--spot-fill),
+    transparent 45%
+  );
+}
+
+/* Blueprint: a blue engineering grid with registration marks every fourth
+   line, fading out toward the edges. */
+.blueprint {
+  pointer-events: none;
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background-image:
+    linear-gradient(var(--brand-line) 1px, transparent 1px),
+    linear-gradient(90deg, var(--brand-line) 1px, transparent 1px);
+  background-size: 56px 56px;
+  background-position: -1px -1px;
+  mask-image: radial-gradient(ellipse 80% 70% at 50% 30%, #000 30%, transparent 85%);
+  -webkit-mask-image: radial-gradient(ellipse 80% 70% at 50% 30%, #000 30%, transparent 85%);
+}
+
+.blueprint::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-color: var(--brand-mark);
+  --marks: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='224' height='224'><path d='M0 6V-6M-6 0H6M224 6V-6M218 0H230M0 230V218M-6 224H6M224 230V218M218 224H230' stroke='black' stroke-width='1'/></svg>");
+  mask-image: var(--marks);
+  -webkit-mask-image: var(--marks);
+  mask-size: 224px 224px;
+  -webkit-mask-size: 224px 224px;
+  mask-position: -1px -1px;
+  -webkit-mask-position: -1px -1px;
+}
+
+/* Portrait with the stack orbiting in 3D. Position comes from utilities:
+   unlayered CSS would override Tailwind classes. */
+.orbit-stage {
+  perspective: 1400px;
+  transform-style: preserve-3d;
+}
+
+.orbit-backlight {
+  position: absolute;
+  inset: 6% 10% 0;
+  border-radius: 50%;
+  background: radial-gradient(closest-side, var(--stage), transparent 72%);
+}
+
+.orbit-ring {
+  position: absolute;
+  left: 50%;
+  top: var(--cy, 66%);
+  width: var(--size);
+  height: var(--size);
+  margin-left: calc(var(--size) / -2);
+  margin-top: calc(var(--size) / -2);
+  border-radius: 50%;
+  border: 1px solid var(--orbit-line);
+  transform-style: preserve-3d;
+  transform: rotateX(var(--tilt, 74deg)) rotateY(var(--lean, -8deg));
+}
+
+.orbit-spin {
+  position: absolute;
+  inset: 0;
+  transform-style: preserve-3d;
+  animation: spin var(--dur, 40s) linear infinite;
+  animation-direction: var(--dir, normal);
+}
+
+.orbit-item {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 0;
+  height: 0;
+  transform-style: preserve-3d;
+  transform: rotate(var(--angle)) translateX(calc(var(--size) / 2));
+}
+
+.orbit-face {
+  position: absolute;
+  left: -1.375rem;
+  top: -1.375rem;
+  display: grid;
+  place-items: center;
+  width: 2.75rem;
+  height: 2.75rem;
+  border-radius: 999px;
+  transform-style: preserve-3d;
+  animation: counter-spin var(--dur, 40s) linear infinite;
+  animation-direction: var(--dir, normal);
+}
+
+.orbit-face > span {
+  display: grid;
+  place-items: center;
+  width: 100%;
+  height: 100%;
+  border-radius: inherit;
+  /* Undo the item's angle on the ring, then the ring's own tilt, so every logo faces the viewer. */
+  transform: rotate(calc(var(--angle) * -1)) rotateY(calc(var(--lean, -8deg) * -1))
+    rotateX(calc(var(--tilt, 74deg) * -1));
+  background: var(--surface);
+  border: 1px solid var(--line-strong);
+  box-shadow: var(--float-shadow);
+}
+
+/* Experience timeline that fills while scrolling */
+.timeline-track {
+  position: absolute;
+  inset-block: 0;
+  inset-inline-start: 0;
+  width: 1px;
+  background: var(--line-strong);
+}
+
+.timeline-track > span {
+  position: absolute;
+  inset: 0;
+  background: var(--brand);
+  transform-origin: top;
+  transform: scaleY(var(--progress, 0));
+}
+
+/* Scroll cue under the hero */
+.scroll-cue {
+  position: relative;
+  width: 1px;
+  height: 2.75rem;
+  overflow: hidden;
+  background: var(--line-strong);
+}
+
+.scroll-cue::after {
+  content: "";
+  position: absolute;
+  inset-inline: 0;
+  top: 0;
+  height: 40%;
+  background: var(--brand-text);
+  animation: scroll-cue 2.2s var(--ease-out) infinite;
+}
+
+/* Smooth scrolling (Lenis) does its own easing; native smoothing would fight it. */
+html.lenis {
+  scroll-behavior: auto;
+}
+
+/* Scrolling past the home hero: the copy drifts up and dims while the
+   portrait sinks a little slower, for depth. Scroll-driven, so it runs off
+   the main thread; browsers without support skip it. */
+@supports (animation-timeline: scroll()) {
+  @media (prefers-reduced-motion: no-preference) and (min-width: 1024px) {
+    .hero-copy {
+      animation: hero-copy-out linear both;
+      animation-timeline: scroll(root);
+      animation-range: 0 85vh;
+    }
+
+    .hero-visual {
+      animation: hero-visual-out linear both;
+      animation-timeline: scroll(root);
+      animation-range: 0 100vh;
+    }
+  }
+}
+
+@keyframes hero-copy-out {
+  to {
+    opacity: 0.15;
+    transform: translate3d(0, -72px, 0);
+  }
+}
+
+@keyframes hero-visual-out {
+  to {
+    transform: translate3d(0, 96px, 0) scale(0.94);
+  }
+}
+
+/* ---------- Keyframes ---------- */
+
+@keyframes scroll-cue {
+  from {
+    transform: translateY(-100%);
+  }
+  to {
+    transform: translateY(260%);
+  }
+}
+
+@keyframes word-up {
+  to {
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@keyframes fade-up {
+  from {
+    opacity: 0.01;
+    transform: translate3d(0, 20px, 0);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes count-up {
+  from {
+    --num: 0;
+  }
+  to {
+    --num: var(--to, 0);
+  }
+}
+
+@keyframes marquee {
+  to {
+    transform: translate3d(-50%, 0, 0);
+  }
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes counter-spin {
+  to {
+    transform: rotate(-360deg);
+  }
+}
+
+@keyframes status-wait {
+  50% {
+    opacity: 0.45;
+  }
+}
+
+.status-checking {
+  animation: status-wait 1.2s ease-in-out infinite;
+}
+
+@keyframes portrait-in {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 32px, 0) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.portrait-in {
+  animation: portrait-in 1300ms var(--ease-out) 150ms both;
+}
+
+/* ---------- Route and theme transitions ---------- */
+
+::view-transition-old(root) {
+  animation: vt-out 220ms ease both;
+}
+
+::view-transition-new(root) {
+  animation: vt-in 480ms var(--ease-out) both;
+}
+
+/* Switching theme cross-fades the whole page instead of sliding it. */
+:root[data-theme-switching]::view-transition-old(root) {
+  animation: none;
+}
+
+:root[data-theme-switching]::view-transition-new(root) {
+  animation: vt-fade 360ms ease both;
+}
+
+@keyframes vt-out {
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes vt-in {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 14px, 0);
+  }
+}
+
+@keyframes vt-fade {
+  from {
+    opacity: 0;
+  }
+}
+
+/* ---------- Reduced motion: everything lands in its final state ---------- */
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-delay: 0ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    transition-delay: 0ms !important;
+  }
+  html.js [data-reveal]:not([data-inview]) {
+    opacity: 1;
+    transform: none;
+  }
+  .marquee-track {
+    flex-wrap: wrap;
+    width: auto;
+    transform: none !important;
+  }
+  .orbit-spin,
+  .orbit-face {
+    animation: none !important;
+  }
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation: none !important;
+  }
+}
